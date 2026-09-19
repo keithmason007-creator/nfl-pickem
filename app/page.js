@@ -65,6 +65,8 @@ export default function Home() {
   const [picks, setPicks] = useState({});
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [tab, setTab] = useState("picks");
   const [leaders, setLeaders] = useState([]);
@@ -128,29 +130,19 @@ export default function Home() {
 }
 
   async function signIn() {
-    if (!supabase) {
-      setMessage("Supabase is not configured.");
-      return;
-    }
-
-    if (!email.trim()) {
-      setMessage("Enter your email address first.");
-      return;
-    }
-
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: window.location.origin
-      }
-    });
-
-    setMessage(
-      error
-        ? error.message
-        : "Check your email for the sign-in link."
-    );
+  if (!supabase) {
+    setMessage("Supabase is not configured.");
+    return;
   }
+
+  const { error } = await supabase.auth.signInAnonymously();
+
+  if (error) {
+    setMessage(error.message);
+  } else {
+    setMessage("Signed in!");
+  }
+}
 
   async function choose(game, team) {
     if (new Date(game.kickoff_time) <= new Date()) return;
