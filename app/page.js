@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "../lib/supabase";
 
 const demoGames = [
@@ -21,16 +21,46 @@ const demoGames = [
 ];
 
 const names = {
-  PHI:"Eagles", TEN:"Titans", PIT:"Steelers", NE:"Patriots", MIN:"Vikings", CHI:"Bears",
-  GB:"Packers", NYJ:"Jets", NO:"Saints", BAL:"Ravens", CIN:"Bengals", HOU:"Texans",
-  CLE:"Browns", TB:"Buccaneers", JAX:"Jaguars", DEN:"Broncos", LV:"Raiders", LAC:"Chargers",
-  SEA:"Seahawks", ARI:"Cardinals", MIA:"Dolphins", SF:"49ers", WAS:"Commanders", DAL:"Cowboys",
-  IND:"Colts", KC:"Chiefs", NYG:"Giants", LA:"Rams"
+  PHI: "Eagles",
+  TEN: "Titans",
+  PIT: "Steelers",
+  NE: "Patriots",
+  MIN: "Vikings",
+  CHI: "Bears",
+  GB: "Packers",
+  NYJ: "Jets",
+  NO: "Saints",
+  BAL: "Ravens",
+  CIN: "Bengals",
+  HOU: "Texans",
+  CLE: "Browns",
+  TB: "Buccaneers",
+  JAX: "Jaguars",
+  DEN: "Broncos",
+  LV: "Raiders",
+  LAC: "Chargers",
+  SEA: "Seahawks",
+  ARI: "Cardinals",
+  MIA: "Dolphins",
+  SF: "49ers",
+  WAS: "Commanders",
+  DAL: "Cowboys",
+  IND: "Colts",
+  KC: "Chiefs",
+  NYG: "Giants",
+  LA: "Rams"
 };
 
 export default function Home() {
-  const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-  const [supabase] = useState(() => configured ? createClient() : null);
+  const configured = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+
+  const [supabase] = useState(() =>
+    configured ? createClient() : null
+  );
+
   const [games, setGames] = useState(demoGames);
   const [picks, setPicks] = useState({});
   const [user, setUser] = useState(null);
@@ -40,139 +70,317 @@ export default function Home() {
   const [leaders, setLeaders] = useState([]);
 
   useEffect(() => {
-    const local = JSON.parse(localStorage.getItem("nfl-picks") || "{}");
+    const local = JSON.parse(
+      localStorage.getItem("nfl-picks") || "{}"
+    );
+
     setPicks(local);
+
     if (!supabase) return;
-    supabase.auth.getUser().then(({ data }) => setUser(data.user || null));
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => setUser(session?.user || null));
+
+    supabase.auth
+      .getUser()
+      .then(({ data }) => setUser(data.user || null));
+
+    const { data: listener } =
+      supabase.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user || null);
+      });
+
     loadGames();
+
     return () => listener.subscription.unsubscribe();
   }, [supabase]);
 
   async function loadGames() {
     if (!supabase) return;
-    const { data } = await supabase.from("games").select("*").order("kickoff_time");
+
+    const { data } = await supabase
+      .from("games")
+      .select("*")
+      .order("kickoff_time");
+
     if (data?.length) setGames(data);
   }
 
   async function signIn() {
-    if (!supabase) return setMessage("Add Supabase keys to .env.local to enable accounts.");
+    if (!supabase) {
+      setMessage("Supabase is not configured.");
+      return;
+    }
+
+    if (!email.trim()) {
+      setMessage("Enter your email address first.");
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: window.location.origin }
+      options: {
+        emailRedirectTo: window.location.origin
+      }
     });
-    setMessage(error ? error.message : "Check your email for the sign-in link.");
+
+    setMessage(
+      error
+        ? error.message
+        : "Check your email for the sign-in link."
+    );
   }
 
   async function choose(game, team) {
     if (new Date(game.kickoff_time) <= new Date()) return;
-    const next = { ...picks, [game.id]: team };
+
+    const next = {
+      ...picks,
+      [game.id]: team
+    };
+
     setPicks(next);
     localStorage.setItem("nfl-picks", JSON.stringify(next));
-    if (supabase && user && !game.id.startsWith("demo-")) {
+
+    if (
+      supabase &&
+      user &&
+      !game.id.startsWith("demo-")
+    ) {
       await supabase.from("picks").upsert(
-        { user_id: user.id, game_id: game.id, picked_team: team },
-        { onConflict: "user_id,game_id" }
+        {
+          user_id: user.id,
+          game_id: game.id,
+          picked_team: team
+        },
+        {
+          onConflict: "user_id,game_id"
+        }
       );
     }
   }
 
   async function loadLeaderboard() {
     setTab("leaderboard");
+
     if (!supabase) {
-      setLeaders([{ name: "Demo Player", correct: 0, total: Object.keys(picks).length }]);
+      setLeaders([
+        {
+          name: "Demo Player",
+          correct: 0,
+          total: Object.keys(picks).length
+        }
+      ]);
       return;
     }
-    const { data } = await supabase.from("leaderboard").select("*").order("correct", { ascending: false });
+
+    const { data } = await supabase
+      .from("leaderboard")
+      .select("*")
+      .order("correct", { ascending: false });
+
     setLeaders(data || []);
   }
 
   const completed = Object.keys(picks).length;
-  const pct = Math.round((completed / games.length) * 100) || 0;
+  const pct = games.length
+    ? Math.round((completed / games.length) * 100)
+    : 0;
 
   return (
     <main>
-      <header>
+      <header className="hero">
         <div>
-          <div className="eyebrow">NFL PICK'EM</div>
+          <div className="eyebrow">NFL PICK&apos;EM</div>
           <h1>Sunday Picks</h1>
+          <p className="subtitle">
+            Pick every winner before kickoff.
+          </p>
         </div>
+
         <div className="week">WEEK 2</div>
       </header>
 
-      <nav>
-        <button className={tab==="picks" ? "active" : ""} onClick={() => setTab("picks")}>My Picks</button>
-        <button className={tab==="leaderboard" ? "active" : ""} onClick={loadLeaderboard}>Leaderboard</button>
+      <nav className="tabs">
+        <button
+          className={tab === "picks" ? "active" : ""}
+          onClick={() => setTab("picks")}
+        >
+          My Picks
+        </button>
+
+        <button
+          className={tab === "leaderboard" ? "active" : ""}
+          onClick={loadLeaderboard}
+        >
+          Leaderboard
+        </button>
       </nav>
 
       {!user && tab === "picks" && (
         <section className="login">
           <div>
-            <strong>{configured ? "Sign in to save picks across devices" : "Demo mode"}</strong>
-            <p>{configured ? "We'll email you a secure sign-in link." : "Picks save in this browser. Connect Supabase to enable real accounts and groups."}</p>
+            <strong>
+              {configured
+                ? "Save your picks"
+                : "Demo mode"}
+            </strong>
+
+            <p>
+              {configured
+                ? "Sign in with your email to keep your picks across devices."
+                : "Your picks are saved in this browser."}
+            </p>
           </div>
-          {configured && <div className="loginRow">
-            <input value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" type="email" />
-            <button onClick={signIn}>Sign in</button>
-          </div>}
-          {message && <small>{message}</small>}
+
+          {configured && (
+            <div className="loginRow">
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                type="email"
+              />
+
+              <button onClick={signIn}>
+                Sign in
+              </button>
+            </div>
+          )}
+
+          {message && (
+            <small className="message">{message}</small>
+          )}
         </section>
       )}
 
       {tab === "picks" ? (
         <>
           <section className="progress">
-            <div><strong>{completed} of {games.length}</strong> picks made</div>
-            <div className="bar"><span style={{width: `${pct}%`}} /></div>
+            <div className="progressTop">
+              <strong>
+                {completed} of {games.length} picks
+              </strong>
+
+              <span>{pct}% complete</span>
+            </div>
+
+            <div className="bar">
+              <span style={{ width: `${pct}%` }} />
+            </div>
           </section>
 
           <section className="games">
-            {games.map(game => {
-              const locked = new Date(game.kickoff_time) <= new Date();
+            {games.map((game) => {
+              const locked =
+                new Date(game.kickoff_time) <= new Date();
+
               return (
                 <article className="game" key={game.id}>
                   <div className="time">
-                    {new Date(game.kickoff_time).toLocaleString([], {weekday:"short", hour:"numeric", minute:"2-digit"})}
-                    {locked && <span> â¢ LOCKED</span>}
+                    <span>
+                      {new Date(
+                        game.kickoff_time
+                      ).toLocaleString([], {
+                        weekday: "short",
+                        hour: "numeric",
+                        minute: "2-digit"
+                      })}
+                    </span>
+
+                    {locked && (
+                      <span className="locked">
+                        LOCKED
+                      </span>
+                    )}
                   </div>
+
                   <div className="matchup">
-                    {[game.away_team, game.home_team].map((team, i) => (
-                      <button
-                        key={team}
-                        disabled={locked}
-                        onClick={() => choose(game, team)}
-                        className={picks[game.id] === team ? "team selected" : "team"}
-                      >
-                        <span className="abbr">{team}</span>
-                        <span>{names[team] || team}</span>
-                        <span className="check">{picks[game.id] === team ? "â" : ""}</span>
-                      </button>
-                    ))}
+                    {[game.away_team, game.home_team].map(
+                      (team, index) => {
+                        const selected =
+                          picks[game.id] === team;
+
+                        return (
+                          <div
+                            className="teamWrap"
+                            key={team}
+                          >
+                            <button
+                              disabled={locked}
+                              onClick={() =>
+                                choose(game, team)
+                              }
+                              className={
+                                selected
+                                  ? "team selected"
+                                  : "team"
+                              }
+                            >
+                              <span className="abbr">
+                                {team}
+                              </span>
+
+                              <span className="teamName">
+                                {names[team] || team}
+                              </span>
+
+                              <span className="check">
+                                {selected ? "✓" : ""}
+                              </span>
+                            </button>
+
+                            {index === 0 && (
+                              <span className="at">@</span>
+                            )}
+                          </div>
+                        );
+                      }
+                    )}
                   </div>
-                  <div className="at">@</div>
                 </article>
               );
             })}
           </section>
-          <div className="save">{completed === games.length ? "â All picks are saved" : "Your picks save automatically"}</div>
+
+          <div className="save">
+            {completed === games.length
+              ? "✓ All picks are saved"
+              : "Your picks save automatically"}
+          </div>
         </>
       ) : (
         <section className="leaderboard">
           <h2>Weekly Leaderboard</h2>
-          <p>Scores update as completed games receive a winner.</p>
-          {leaders.length === 0 ? <div className="empty">No scores yet.</div> :
-            leaders.map((l, i) => (
-              <div className="leader" key={i}>
-                <span className="rank">{i+1}</span>
-                <strong>{l.name || "Player"}</strong>
-                <span>{l.correct ?? 0} correct</span>
+
+          <p>
+            Scores update as games are completed.
+          </p>
+
+          {leaders.length === 0 ? (
+            <div className="empty">
+              No scores yet.
+            </div>
+          ) : (
+            leaders.map((leader, index) => (
+              <div className="leader" key={index}>
+                <span className="rank">
+                  {index + 1}
+                </span>
+
+                <strong>
+                  {leader.name || "Player"}
+                </strong>
+
+                <span>
+                  {leader.correct ?? 0} correct
+                </span>
               </div>
             ))
-          }
+          )}
         </section>
       )}
 
-      <footer>Pick winners. Beat your friends. That's it.</footer>
+      <footer>
+        Pick winners. Beat your friends. That&apos;s it.
+      </footer>
     </main>
   );
 }
