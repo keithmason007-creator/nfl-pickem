@@ -10,81 +10,416 @@ body {
 }
 
 body {
-  background: #0b1220;
+  background: #08111f;
   color: #f8fafc;
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1.4;
 }
 
-main {
-  width: 100%;
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 24px 16px 60px;
-}
-
-h1 {
-  font-size: 42px;
-  line-height: 1.05;
-  margin: 40px 0 32px;
-}
-
-h2,
-h3,
-p {
-  margin-top: 0;
-}
-
 button,
-input,
-select {
+input {
   font: inherit;
 }
 
 button {
   cursor: pointer;
-  border: 1px solid #475569;
-  border-radius: 12px;
-  padding: 10px 16px;
-  background: #172033;
+}
+
+main {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 16px 70px;
+}
+
+/* HEADER */
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin: 22px 0 28px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #94a3b8;
+  margin-bottom: 7px;
+}
+
+h1 {
+  font-size: 42px;
+  line-height: 1;
+  margin: 0 0 10px;
+  letter-spacing: -1.5px;
+}
+
+.subtitle {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.week {
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 9px 12px;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  background: #111c2e;
+}
+
+/* TABS */
+
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background: #111c2e;
+  border: 1px solid #26354a;
+  padding: 5px;
+  border-radius: 14px;
+  margin-bottom: 18px;
+}
+
+.tabs button {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 12px;
+  color: #94a3b8;
+  background: transparent;
+  font-weight: 700;
+}
+
+.tabs button.active {
+  background: #f8fafc;
+  color: #08111f;
+}
+
+/* LOGIN */
+
+.login {
+  border: 1px solid #26354a;
+  background: #111c2e;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.login strong {
+  font-size: 16px;
+}
+
+.login p {
+  margin: 5px 0 12px;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.loginRow {
+  display: flex;
+  gap: 8px;
+}
+
+.login input {
+  min-width: 0;
+  flex: 1;
+  border: 1px solid #334155;
+  background: #08111f;
   color: #f8fafc;
-  margin: 4px;
+  border-radius: 10px;
+  padding: 11px 12px;
 }
 
-button:hover {
-  background: #243047;
+.loginRow button {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 16px;
+  font-weight: 800;
+  background: #f8fafc;
+  color: #08111f;
 }
 
-button:active {
+.message {
+  display: block;
+  margin-top: 10px;
+  color: #cbd5e1;
+}
+
+/* PROGRESS */
+
+.progress {
+  margin: 20px 0;
+}
+
+.progressTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.progressTop span {
+  color: #94a3b8;
+}
+
+.bar {
+  width: 100%;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #1e293b;
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  background: #f8fafc;
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+/* GAMES */
+
+.games {
+  display: grid;
+  gap: 12px;
+}
+
+.game {
+  position: relative;
+  background: #111c2e;
+  border: 1px solid #26354a;
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.time {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.locked {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #f8fafc;
+}
+
+.matchup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.teamWrap {
+  position: relative;
+}
+
+.team {
+  position: relative;
+  width: 100%;
+  min-height: 78px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+  border: 1px solid #334155;
+  border-radius: 13px;
+  background: #0b1627;
+  color: #f8fafc;
+  padding: 12px 36px 12px 13px;
+  transition: 0.15s ease;
+}
+
+.team:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+
+.team:not(:disabled):active {
   transform: scale(0.98);
 }
 
-input {
-  width: min(100%, 320px);
-  background: #ffffff;
-  color: #111827;
-  border: 0;
-  border-radius: 10px;
-  padding: 12px 14px;
-  margin: 8px 4px 8px 0;
+.team.selected {
+  background: #f8fafc;
+  color: #08111f;
+  border-color: #f8fafc;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.abbr {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
 }
 
-@media (max-width: 600px) {
+.teamName {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.team.selected .teamName {
+  color: #475569;
+}
+
+.check {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.at {
+  position: absolute;
+  z-index: 2;
+  right: -18px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background: #08111f;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* SAVE STATUS */
+
+.save {
+  margin: 22px 0 8px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+/* LEADERBOARD */
+
+.leaderboard {
+  margin-top: 20px;
+}
+
+.leaderboard h2 {
+  margin-bottom: 5px;
+}
+
+.leaderboard > p {
+  margin-top: 0;
+  color: #94a3b8;
+}
+
+.leader,
+.empty {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  margin-top: 8px;
+  border: 1px solid #26354a;
+  border-radius: 13px;
+  background: #111c2e;
+}
+
+.rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #1e293b;
+  font-weight: 800;
+}
+
+.empty {
+  display: block;
+  color: #94a3b8;
+}
+
+/* FOOTER */
+
+footer {
+  text-align: center;
+  margin-top: 50px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+/* PHONE */
+
+@media (max-width: 520px) {
   main {
-    padding: 20px 14px 50px;
+    padding: 22px 13px 55px;
+  }
+
+  .hero {
+    margin-top: 14px;
   }
 
   h1 {
-    font-size: 38px;
-    margin: 32px 0 28px;
+    font-size: 36px;
   }
 
-  button {
-    padding: 10px 14px;
+  .subtitle {
+    max-width: 210px;
+  }
+
+  .week {
+    font-size: 11px;
+    padding: 8px 9px;
+  }
+
+  .loginRow {
+    flex-direction: column;
+  }
+
+  .loginRow button {
+    width: 100%;
+  }
+
+  .game {
+    padding: 12px;
+  }
+
+  .matchup {
+    gap: 8px;
+  }
+
+  .team {
+    min-height: 76px;
+    padding: 10px 28px 10px 11px;
+  }
+
+  .abbr {
+    font-size: 18px;
+  }
+
+  .teamName {
+    font-size: 11px;
+  }
+
+  .at {
+    right: -17px;
+    width: 25px;
+    height: 25px;
   }
 }
