@@ -93,15 +93,39 @@ export default function Home() {
   }, [supabase]);
 
   async function loadGames() {
-    if (!supabase) return;
+  if (!supabase) return;
 
-    const { data } = await supabase
-      .from("games")
-      .select("*")
-      .order("kickoff_time");
+  const { data: gameData } = await supabase
+    .from("games")
+    .select("*")
+    .order("kickoff_time");
 
-    if (data?.length) setGames(data);
+  if (gameData?.length) {
+    setGames(gameData);
   }
+
+  const { data: { user: currentUser } } =
+    await supabase.auth.getUser();
+
+  if (currentUser) {
+    const { data: pickData } = await supabase
+      .from("picks")
+      .select("game_id, picked_team")
+      .eq("user_id", currentUser.id);
+
+    const savedPicks = {};
+
+    (pickData || []).forEach((pick) => {
+      savedPicks[pick.game_id] = pick.picked_team;
+    });
+
+    setPicks(savedPicks);
+    localStorage.setItem(
+      "nfl-picks",
+      JSON.stringify(savedPicks)
+    );
+  }
+}
 
   async function signIn() {
     if (!supabase) {
