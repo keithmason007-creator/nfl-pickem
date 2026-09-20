@@ -368,7 +368,20 @@ async function saveProfile() {
               );
             })}
           </section>
+<div className="save">
+  <strong>Player name</strong>
 
+  <input
+    type="text"
+    value={name}
+    onChange={(e) => setName(e.target.value)}
+    placeholder="Enter your name"
+  />
+
+  <button onClick={saveProfile}>
+    {profileSaved ? "Name saved ✓" : "Save name"}
+  </button>
+</div>
           <div className="save">
             {completed === games.length
               ? "✓ All picks are saved"
