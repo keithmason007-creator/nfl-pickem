@@ -67,6 +67,7 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 const [name, setName] = useState("");
+const [profileSaved, setProfileSaved] = useState(false);
   const [message, setMessage] = useState("");
   const [tab, setTab] = useState("picks");
   const [leaders, setLeaders] = useState([]);
