@@ -115,6 +115,15 @@ supabase.auth.getUser().then(async ({ data }) => {
     await supabase.auth.getUser();
 
   if (currentUser) {
+    const { data: profileData } = await supabase
+  .from("profiles")
+  .select("name")
+  .eq("user_id", currentUser.id)
+  .maybeSingle();
+
+if (profileData?.name) {
+  setName(profileData.name);
+}
     const { data: pickData } = await supabase
       .from("picks")
       .select("game_id, picked_team")
