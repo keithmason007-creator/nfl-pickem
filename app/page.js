@@ -207,7 +207,7 @@ const [name, setName] = useState("");
       <header className="hero">
         <div>
           <div className="eyebrow">NFL PICK&apos;EM</div>
-          <h1>Sunday Picks</h1>
+          <h1>Weekly Picks</h1>
           <p className="subtitle">
             Pick every winner before kickoff.
           </p>
