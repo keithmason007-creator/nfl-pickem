@@ -195,7 +195,9 @@ const [name, setName] = useState("");
     setLeaders(data || []);
   }
 
-  const completed = Object.keys(picks).length;
+  const completed = games.filter(
+  (game) => Boolean(picks[game.id])
+).length;
   const pct = games.length
     ? Math.round((completed / games.length) * 100)
     : 0;
