@@ -143,18 +143,25 @@ if (profileData?.name) {
   }
 }
 
-  async function signIn() {
+ async function signIn() {
   if (!supabase) {
     setMessage("Supabase is not configured.");
     return;
   }
 
-  const { error } = await supabase.auth.signInAnonymously();
+  if (!email.trim()) {
+    setMessage("Enter your email address.");
+    return;
+  }
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email: email.trim(),
+  });
 
   if (error) {
     setMessage(error.message);
   } else {
-    setMessage("Signed in!");
+    setMessage("Check your email for your sign-in code.");
   }
 }
 async function saveProfile() {
