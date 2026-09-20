@@ -213,12 +213,28 @@ async function saveProfile() {
       return;
     }
 
-    const { data } = await supabase
-      .from("leaderboard")
-      .select("*")
-      .order("correct", { ascending: false });
+    const { data: profiles } = await supabase
+  .from("profiles")
+  .select("user_id, name");
 
-    setLeaders(data || []);
+const { data: allPicks } = await supabase
+  .from("picks")
+  .select("user_id, game_id, picked_team");
+
+const leaderboard = (profiles || []).map((profile) => {
+  const userPicks = (allPicks || []).filter(
+    (pick) => pick.user_id === profile.user_id
+  );
+
+  return {
+    user_id: profile.user_id,
+    name: profile.name || "Player",
+    correct: 0,
+    total: userPicks.length,
+  };
+});
+
+setLeaders(leaderboard);
   }
 
   const completed = games.filter(
