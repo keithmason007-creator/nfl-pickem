@@ -240,26 +240,11 @@ const [name, setName] = useState("");
             </strong>
 
             <p>
-              {configured
-                ? "Sign in with your email to keep your picks across devices."
-                : "Your picks are saved in this browser."}
-            </p>
+  Your picks are saved automatically.
+</p>
           </div>
 
-          {configured && (
-            <div className="loginRow">
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                type="email"
-              />
-
-              <button onClick={signIn}>
-                Sign in
-              </button>
-            </div>
-          )}
+         
 
           {message && (
             <small className="message">{message}</small>
