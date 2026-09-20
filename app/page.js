@@ -80,9 +80,13 @@ const [name, setName] = useState("");
 
     if (!supabase) return;
 
-    supabase.auth
-      .getUser()
-      .then(({ data }) => setUser(data.user || null));
+supabase.auth.getUser().then(async ({ data }) => {
+  if (data.user) {
+    setUser(data.user);
+  } else {
+    await signIn();
+  }
+});
 
     const { data: listener } =
       supabase.auth.onAuthStateChange((_event, session) => {
