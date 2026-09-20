@@ -148,7 +148,28 @@ supabase.auth.getUser().then(async ({ data }) => {
     setMessage("Signed in!");
   }
 }
+async function saveProfile() {
+  if (!supabase || !user || !name.trim()) return;
 
+  const { error } = await supabase.from("profiles").upsert(
+    {
+      user_id: user.id,
+      name: name.trim(),
+    },
+    {
+      onConflict: "user_id",
+    }
+  );
+
+  if (error) {
+    setMessage(error.message);
+    return;
+  }
+
+  setProfileSaved(true);
+  setMessage("Name saved!");
+  loadLeaderboard();
+}
   async function choose(game, team) {
     if (new Date(game.kickoff_time) <= new Date()) return;
 
